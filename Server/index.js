@@ -64,7 +64,7 @@ passport.deserializeUser((user, done) => {
 
 
 //Start the NODE JS server
-app.listen(3001, () => console.log(`Server started on port 3001...`))
+app.listen(3000, () => console.log(`Server started on port 3000...`))
 
 
 //console.log() values of "req.session" and "req.user" so we can see what is happening during Google Authentication
