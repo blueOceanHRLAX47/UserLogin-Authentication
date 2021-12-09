@@ -1,12 +1,12 @@
 {
-  "name": "sdc-products-overview",
+  "name": "blueocean-cultivate",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/index.js"
   },
-  "author": "",
+  "author": "Josh Ayres, Timmy Liaw, Brett Roberts, Kaitlyn Gill",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
