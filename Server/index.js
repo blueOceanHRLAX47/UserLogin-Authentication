@@ -6,6 +6,8 @@ const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const router = require('./routes');
+const { sequelize, User } = require('../database');
+const { QueryTypes } = require('sequelize');
 const port = 3000;
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('../config.js');
@@ -26,9 +28,20 @@ app.use(passport.initialize()); // init passport on every route call
 app.use(passport.session()); //allow passport to use 'express-session'
 
 
-authUser = (request, accessToken, refreshToken, profile, done) => {
+authUser = async (request, accessToken, refreshToken, profile, done) => {
   // TODO: Create new user if user doesnt exsist
-  // Have google_id in schema = profile.id
+  console.log('Auth starting', profile.id);
+  // const user = await sequelize.query('SELECT * FROM users');
+  const user = await User.findOrCreate({
+    where: {
+      google_id: profile.id
+    },
+    defaults: {
+      google_id: profile.id
+    }
+  })
+  console.log(user);
+  // Switch profile to user
   return done(null, profile);
 };
 
@@ -43,8 +56,8 @@ passport.use(new GoogleStrategy({
 
 
 passport.serializeUser((user, done) => {
-  console.log('\n--------> Serialize User:');
-  console.log(user);
+  // console.log('\n--------> Serialize User:');
+  // console.log(user);
   // The USER object is the 'authenticated user' from the done() in authUser function.
   // serializeUser() will attach this user to 'req.session.passport.user.{user}', so that it is tied to the session object for each session.
 
@@ -53,8 +66,8 @@ passport.serializeUser((user, done) => {
 
 
 passport.deserializeUser((user, done) => {
-  console.log('\n--------- Deserialized User:');
-  console.log(user);
+  // console.log('\n--------- Deserialized User:');
+  // console.log(user);
   // This is the {user} that was saved in req.session.passport.user.{user} in the serializationUser()
   // deserializeUser will attach this {user} to the 'req.user.{user}', so that it can be used anywhere in the App.
 
@@ -69,21 +82,21 @@ app.listen(3000, () => console.log('Server started on port 3000...'));
 //console.log() values of 'req.session' and 'req.user' so we can see what is happening during Google Authentication
 let count = 1;
 showlogs = (req, res, next) => {
-  console.log('\n==============================');
-  console.log(`------------>  ${count++}`);
+  // console.log('\n==============================');
+  // console.log(`------------>  ${count++}`);
 
-  console.log('\n req.session.passport -------> ');
-  console.log(req.session.passport);
+  // console.log('\n req.session.passport -------> ');
+  // console.log(req.session.passport);
 
-  console.log('\n req.user -------> ');
-  console.log(req.user);
+  // console.log('\n req.user -------> ');
+  // console.log(req.user);
 
-  console.log('\n Session and Cookie');
-  console.log(`req.session.id -------> ${req.session.id}`);
-  console.log('req.session.cookie -------> ');
-  console.log(req.session.cookie);
+  // console.log('\n Session and Cookie');
+  // console.log(`req.session.id -------> ${req.session.id}`);
+  // console.log('req.session.cookie -------> ');
+  // console.log(req.session.cookie);
 
-  console.log('===========================================\n');
+  // console.log('===========================================\n');
 
   next();
 };
@@ -100,7 +113,7 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/dashboard',
+    successRedirect: '/',
     failureRedirect: '/login'
   }));
 
@@ -128,9 +141,6 @@ app.get('/', checkAuthenticated, (req, res) => {
 app.post('/logout', (req, res) => {
   req.logOut();
   res.redirect('/login');
-  console.log('-------> User Logged out');
+  // console.log('-------> User Logged out');
 });
 
-// app.listen(port, () => {
-//   console.log(`listening on port ${port}`);
-// });
