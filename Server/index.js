@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const proxy = require('express-http-proxy');
 const router = require('./routes');
 const { sequelize, User } = require('../database');
 const { QueryTypes } = require('sequelize');
@@ -12,12 +13,21 @@ const port = 3000;
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('../config.js');
 
+//Middleware
+
+//Use the req.isAuthenticated() function to check if user is Authenticated
+checkAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
+};
+
+app.get('/proxy', [checkAuthenticated, proxy('www.google.com')]);
+
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/', router);
 
-//Middleware
 app.use(session({
   secret: 'secret',
   resave: false,
@@ -37,12 +47,19 @@ authUser = async (request, accessToken, refreshToken, profile, done) => {
       google_id: profile.id
     },
     defaults: {
-      google_id: profile.id
+      google_id: profile.id,
+      name: profile.displayName,
+      profile_photo_url: profile.photos[0].value,
+      weight: null,
+      age: null,
+      is_coach: false,
+      coach_id: null
     }
   })
   console.log(user);
+  // TODO: FIll out new user info with stuff from profile
   // Switch profile to user
-  return done(null, profile);
+  return done(null, user[0]);
 };
 
 
@@ -119,21 +136,17 @@ app.get('/auth/google/callback',
 
 //Define the Login Route
 app.get('/login', (req, res) => {
-  res.send({ data: 'login' }).status(200);
+  res.redirect('/auth/google');
+  // res.send({ data: 'login' }).status(200);
   // res.render('login.ejs');
 });
 
 
-//Use the req.isAuthenticated() function to check if user is Authenticated
-checkAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-};
-
 //Define the Protected Route, by using the 'checkAuthenticated' function defined above as middleware
 // home/calendar
 app.get('/', checkAuthenticated, (req, res) => {
-  res.send(`Welcome to Cultivate ${req.user.displayName}`).status(200);
+  res.send(req.user);
+  // res.send(`Welcome to Cultivate ${req.user.name}`).status(200);
   // res.render('dashboard.ejs', { name: req.user.displayName });
 });
 
