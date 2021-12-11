@@ -78,6 +78,19 @@ app.use('/api/recipes', [checkAuthenticated, createProxyMiddleware({
   },
 })]);
 
+app.use('/api/workouts', [checkAuthenticated, createProxyMiddleware({
+  target: 'http://localhost:3001/',
+  changeOrigin: true,
+  pathRewrite: { '/api/recipes': '/' },
+  onProxyReq: (proxyReq, req, res) => {
+    let body = req.body;
+    body.user = req.user;
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(JSON.stringify(body)));
+    proxyReq.write(JSON.stringify(body));
+  },
+})]);
+
 authUser = async (request, accessToken, refreshToken, profile, done) => {
   // TODO: Create new user if user doesnt exsist
   console.log('Auth starting', profile.id);
