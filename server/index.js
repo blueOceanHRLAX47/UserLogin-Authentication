@@ -81,7 +81,7 @@ app.use('/api/recipes', [checkAuthenticated, createProxyMiddleware({
 app.use('/api/workouts', [checkAuthenticated, createProxyMiddleware({
   target: 'http://localhost:3001/',
   changeOrigin: true,
-  pathRewrite: { '/api/recipes': '/' },
+  pathRewrite: { '/api/workouts': '/' },
   onProxyReq: (proxyReq, req, res) => {
     let body = req.body;
     body.user = req.user;
