@@ -46,7 +46,25 @@ app.use(passport.session()); //allow passport to use 'express-session'
 app.use('/api/calendar', [checkAuthenticated, createProxyMiddleware({
   target: 'http://localhost:3001/',
   changeOrigin: true,
-  pathRewrite: {'/api/calendar': '/'},
+  pathRewrite: { '/api/calendar': '/' },
+  onProxyReq: (proxyReq, req, res) => {
+    // Here we are writing the body and user of this req to the targets req
+    // To do this we need to set the http headers to application/json and set the length in bytes
+    // we then write the body with user attached as an key in the object
+    // then we have req.body and req.body.user on our target's req!
+    let body = req.body;
+    body.user = req.user;
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(JSON.stringify(body)));
+    proxyReq.write(JSON.stringify(body));
+  },
+})]);
+
+
+app.use('/api/recipes', [checkAuthenticated, createProxyMiddleware({
+  target: 'http://localhost:3001/',
+  changeOrigin: true,
+  pathRewrite: { '/api/recipes': '/' },
   onProxyReq: (proxyReq, req, res) => {
     // Here we are writing the body and user of this req to the targets req
     // To do this we need to set the http headers to application/json and set the length in bytes
