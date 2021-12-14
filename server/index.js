@@ -27,6 +27,9 @@ checkAuthenticated = (req, res, next) => {
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '../Cultivate_Frontend/client/dist')));
+
 app.use('/', router);
 
 app.use(session({

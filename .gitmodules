@@ -1,0 +1,3 @@
+[submodule "Cultivate_Frontend"]
+	path = Cultivate_Frontend
+	url = git@github.com:blueOceanHRLAX47/Cultivate_Frontend.git
