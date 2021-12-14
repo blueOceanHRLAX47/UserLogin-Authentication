@@ -92,7 +92,7 @@ app.use('/api/workouts', [checkAuthenticated, createProxyMiddleware({
 })]);
 
 app.use('/api/forum', [checkAuthenticated, createProxyMiddleware({
-  target: 'http://localhost:3001/',
+  target: 'http://10.32.0.112',
   changeOrigin: true,
   pathRewrite: { '/api/forum': '/' },
   onProxyReq: (proxyReq, req, res) => {
