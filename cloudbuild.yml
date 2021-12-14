@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/git'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    git config -f .gitmodules submodule.Cultivate_Frontend.url https://github.com/blueOceanHRLAX47/Cultivate_Frontend.git
+    git submodule init
+    git submodule update
+
+- name: gcr.io/cloud-builders/docker
+  args: ["build", "-t", "us-central1-docker.pkg.dev/metal-apricot-334520/userlogin/userlogin", "."]
