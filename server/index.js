@@ -62,7 +62,7 @@ app.use('/api/calendar', [checkAuthenticated, createProxyMiddleware({
 
 
 app.use('/api/recipes', [checkAuthenticated, createProxyMiddleware({
-  target: 'http://localhost:3001/',
+  target: 'http://10.32.10.45/',
   changeOrigin: true,
   pathRewrite: { '/api/recipes': '/' },
   onProxyReq: (proxyReq, req, res) => {
