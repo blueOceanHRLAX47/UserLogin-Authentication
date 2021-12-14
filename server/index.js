@@ -44,7 +44,7 @@ app.use(passport.session()); //allow passport to use 'express-session'
 // even though I didn't specify that I want to go to /proxy on the target
 // with the pathRewrite option I can select the path to goto a different path on the target
 app.use('/api/calendar', [checkAuthenticated, createProxyMiddleware({
-  target: 'http://localhost:3001/',
+  target: 'http://10.32.8.102',
   changeOrigin: true,
   pathRewrite: { '/api/calendar': '/' },
   onProxyReq: (proxyReq, req, res) => {
