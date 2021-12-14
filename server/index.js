@@ -28,7 +28,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, '../Cultivate_Frontend/client/dist')));
+// app.use(express.static(path.join(__dirname, '../Cultivate_Frontend/client/dist')));
 
 app.use('/', router);
 
@@ -40,6 +40,12 @@ app.use(session({
 
 app.use(passport.initialize()); // init passport on every route call
 app.use(passport.session()); //allow passport to use 'express-session'
+
+app.use('/home', createProxyMiddleware({
+  target: 'http://10.32.7.43',
+  changeOrigin: true,
+  pathRewrite: { '/home': '/' }
+}))
 
 // How http-proxy-middleware works:
 // It takes everything on this /proxy/... route and redirects it to target/proxy/...
