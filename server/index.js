@@ -105,9 +105,6 @@ app.use('/api/forum', [checkAuthenticated, createProxyMiddleware({
 })]);
 
 authUser = async (request, accessToken, refreshToken, profile, done) => {
-  // TODO: Create new user if user doesnt exsist
-  console.log('Auth starting', profile.id);
-  // const user = await sequelize.query('SELECT * FROM users');
   const user = await User.findOrCreate({
     where: {
       google_id: profile.id
@@ -122,10 +119,7 @@ authUser = async (request, accessToken, refreshToken, profile, done) => {
       coach_id: null
     }
   })
-  console.log(user);
-  // TODO: FIll out new user info with stuff from profile
-  // Switch profile to user
-  return done(null, user[0]);
+  done(null, user[0]);
 };
 
 
@@ -162,32 +156,6 @@ passport.deserializeUser((user, done) => {
 //Start the NODE JS server
 app.listen(3000, () => console.log('Server started on port 3000...'));
 
-
-//console.log() values of 'req.session' and 'req.user' so we can see what is happening during Google Authentication
-let count = 1;
-showlogs = (req, res, next) => {
-  // console.log('\n==============================');
-  // console.log(`------------>  ${count++}`);
-
-  // console.log('\n req.session.passport -------> ');
-  // console.log(req.session.passport);
-
-  // console.log('\n req.user -------> ');
-  // console.log(req.user);
-
-  // console.log('\n Session and Cookie');
-  // console.log(`req.session.id -------> ${req.session.id}`);
-  // console.log('req.session.cookie -------> ');
-  // console.log(req.session.cookie);
-
-  // console.log('===========================================\n');
-
-  next();
-};
-
-app.use(showlogs);
-
-
 app.get('/auth/google',
   passport.authenticate('google', {
     scope:
@@ -204,8 +172,6 @@ app.get('/auth/google/callback',
 //Define the Login Route
 app.get('/login', (req, res) => {
   res.redirect('/auth/google');
-  // res.send({ data: 'login' }).status(200);
-  // res.render('login.ejs');
 });
 
 
@@ -213,14 +179,11 @@ app.get('/login', (req, res) => {
 // home/calendar
 app.get('/', checkAuthenticated, (req, res) => {
   res.send(req.user);
-  // res.send(`Welcome to Cultivate ${req.user.name}`).status(200);
-  // res.render('dashboard.ejs', { name: req.user.displayName });
 });
 
 //Define the Logout
 app.post('/logout', (req, res) => {
   req.logOut();
   res.redirect('/login');
-  // console.log('-------> User Logged out');
 });
 
