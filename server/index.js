@@ -27,7 +27,7 @@ checkAuthenticated = (req, res, next) => {
 app.use(cors({
   origin: ['http://cultiveight.net/', 'http://localhost:3000']
 }));
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(express.json());
 
 // app.use(express.static(path.join(__dirname, '../Cultivate_Frontend/client/dist')));
@@ -43,10 +43,10 @@ app.use(session({
 app.use(passport.initialize()); // init passport on every route call
 app.use(passport.session()); //allow passport to use 'express-session'
 
-app.use('/home', createProxyMiddleware({
+app.use('/home', [checkAuthenticated, createProxyMiddleware({
   target: 'http://10.32.7.43',
   changeOrigin: true,
-}))
+})])
 
 // How http-proxy-middleware works:
 // It takes everything on this /proxy/... route and redirects it to target/proxy/...
