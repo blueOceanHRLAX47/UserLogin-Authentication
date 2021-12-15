@@ -41,7 +41,7 @@ app.use(session({
 app.use(passport.initialize()); // init passport on every route call
 app.use(passport.session()); //allow passport to use 'express-session'
 
-app.use('/home', createProxyMiddleware({
+app.use('/', createProxyMiddleware({
   target: 'http://10.32.7.43',
   changeOrigin: true,
   pathRewrite: { '/home': '/' }
