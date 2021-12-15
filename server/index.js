@@ -24,7 +24,9 @@ checkAuthenticated = (req, res, next) => {
   res.redirect('/login');
 };
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://cultiveight.net/', 'http://localhost:3000']
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 
