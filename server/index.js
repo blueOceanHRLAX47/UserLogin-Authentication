@@ -182,6 +182,10 @@ app.get('/', checkAuthenticated, (req, res) => {
   res.send(req.user);
 });
 
+app.get('/api/user', checkAuthenticated, (req, res) => {
+  res.send(req.user);
+})
+
 //Define the Logout
 app.post('/logout', (req, res) => {
   req.logOut();
