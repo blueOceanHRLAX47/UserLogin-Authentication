@@ -30,7 +30,6 @@ app.use(cors({
 // app.use(morgan('dev'));
 app.use(express.json());
 
-// app.use(express.static(path.join(__dirname, '../Cultivate_Frontend/client/dist')));
 
 app.use('/', router);
 
@@ -47,6 +46,8 @@ app.use('/home', [checkAuthenticated, createProxyMiddleware({
   target: 'http://10.32.7.43',
   changeOrigin: true,
 })])
+
+app.use('/views', express.static('views'));
 
 // How http-proxy-middleware works:
 // It takes everything on this /proxy/... route and redirects it to target/proxy/...
@@ -144,21 +145,11 @@ passport.use(new GoogleStrategy({
 
 
 passport.serializeUser((user, done) => {
-  // console.log('\n--------> Serialize User:');
-  // console.log(user);
-  // The USER object is the 'authenticated user' from the done() in authUser function.
-  // serializeUser() will attach this user to 'req.session.passport.user.{user}', so that it is tied to the session object for each session.
-
   done(null, user);
 });
 
 
 passport.deserializeUser((user, done) => {
-  // console.log('\n--------- Deserialized User:');
-  // console.log(user);
-  // This is the {user} that was saved in req.session.passport.user.{user} in the serializationUser()
-  // deserializeUser will attach this {user} to the 'req.user.{user}', so that it can be used anywhere in the App.
-
   done(null, user);
 });
 
@@ -175,13 +166,13 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/',
+    successRedirect: '/home',
     failureRedirect: '/login'
   }));
 
 //Define the Login Route
 app.get('/login', (req, res) => {
-  res.redirect('/auth/google');
+  res.render('login.ejs');
 });
 
 
