@@ -179,7 +179,8 @@ app.get('/login', (req, res) => {
 //Define the Protected Route, by using the 'checkAuthenticated' function defined above as middleware
 // home/calendar
 app.get('/', checkAuthenticated, (req, res) => {
-  res.send(req.user);
+  res.redirect('/home');
+  // res.send(req.user);
 });
 
 app.get('/api/user', checkAuthenticated, (req, res) => {
